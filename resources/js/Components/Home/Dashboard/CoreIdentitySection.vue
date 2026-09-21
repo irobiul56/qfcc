@@ -331,7 +331,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
-import CKEditor from '@/Components/CKEditor.vue';
+import CKEditor from '@/Components/QuillEditor.vue';
 
 const props = defineProps({
     coreIdentities: {

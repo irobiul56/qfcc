@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import UserLayout from "@/Layouts/UserLayout.vue";
 import { useForm, Link } from '@inertiajs/vue3';
-import CKEditor from '@/Components/CKEditor.vue';
+import CKEditor from '@/Components/QuillEditor.vue';
 import { Head } from "@inertiajs/vue3";
 import { ElMessage } from 'element-plus';
 

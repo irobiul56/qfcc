@@ -1,127 +1,79 @@
-<!-- resources/js/Pages/Admin/Dashboard.vue -->
 <script setup>
-import { ref, computed } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
-import UserLayout from '@/Layouts/UserLayout.vue';
+import { computed } from 'vue'
+import { Head, Link } from '@inertiajs/vue3'
+import UserLayout from '@/Layouts/UserLayout.vue'
 
-// ============ STATIC DEMO DATA ============
-const stats = ref({
-  total_donations: 148750,
-  donations_this_month: 12480,
-  total_volunteers: 342,
-  pending_volunteers: 12,
-  total_members: 876,
-  active_members: 743,
-  total_events: 48,
-  upcoming_events: 6,
-  total_programs: 8,
-  active_programs: 8,
-  total_registrations: 1245,
-  newsletter_subscribers: 2134,
-  unread_messages: 7,
-});
+/* ═══════════════════════════════════════════════════════════
+   PROPS FROM CONTROLLER
+   ═══════════════════════════════════════════════════════════ */
+const props = defineProps({
+  stats:            { type: Object, required: true },
+  donationChart:    { type: Array,  default: () => [] },
+  donationTypes:    { type: Array,  default: () => [] },
+  recentDonations:  { type: Array,  default: () => [] },
+  upcomingEvents:   { type: Array,  default: () => [] },
+  recentVolunteers: { type: Array,  default: () => [] },
+  topDonors:        { type: Array,  default: () => [] },
+  recentMessages:   { type: Array,  default: () => [] },
+})
 
-const donationChart = ref([
-  { month: '2024-10', total: 8200 },
-  { month: '2024-11', total: 11400 },
-  { month: '2024-12', total: 18600 },
-  { month: '2025-01', total: 9800 },
-  { month: '2025-02', total: 13200 },
-  { month: '2025-03', total: 15800 },
-  { month: '2025-04', total: 14200 },
-  { month: '2025-05', total: 17600 },
-  { month: '2025-06', total: 19800 },
-  { month: '2025-07', total: 16400 },
-  { month: '2025-08', total: 12900 },
-  { month: '2025-09', total: 12480 },
-]);
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════ */
+const currentDate = new Date()
 
-const donationTypes = ref([
-  { type: 'one_time', total: 98500, count: 412 },
-  { type: 'monthly', total: 50250, count: 168 },
-]);
-
-const recentDonations = ref([
-  { id: 1, donor_name: 'Ahmed Hassan', amount: 500, type: 'monthly', created_at: new Date(Date.now() - 1000 * 60 * 30) },
-  { id: 2, donor_name: 'Fatima Khan', amount: 1200, type: 'one_time', created_at: new Date(Date.now() - 1000 * 60 * 120) },
-  { id: 3, donor_name: 'Anonymous', amount: 250, type: 'one_time', created_at: new Date(Date.now() - 1000 * 60 * 60 * 5) },
-  { id: 4, donor_name: 'Yusuf Ali', amount: 300, type: 'monthly', created_at: new Date(Date.now() - 1000 * 60 * 60 * 12) },
-  { id: 5, donor_name: 'Aisha Rahman', amount: 750, type: 'one_time', created_at: new Date(Date.now() - 1000 * 60 * 60 * 24) },
-]);
-
-const upcomingEvents = ref([
-  { id: 1, title: 'QFCC Community Iftar Dinner', starts_at: new Date('2025-06-08T18:00:00'), location: 'Queens, NY', image: null },
-  { id: 2, title: 'Youth Leadership Workshop', starts_at: new Date('2025-06-15T14:00:00'), location: 'Queens, NY', image: null },
-  { id: 3, title: 'Health & Wellness Seminar', starts_at: new Date('2025-06-22T13:00:00'), location: 'Queens, NY', image: null },
-  { id: 4, title: 'Ramadan Fundraising Gala', starts_at: new Date('2025-07-05T19:00:00'), location: 'Flushing, NY', image: null },
-]);
-
-const recentVolunteers = ref([
-  { id: 1, full_name: 'Bilal Ahmed', email: 'bilal@example.com', status: 'pending' },
-  { id: 2, full_name: 'Maryam Siddiqui', email: 'maryam@example.com', status: 'approved' },
-  { id: 3, full_name: 'Omar Farooq', email: 'omar@example.com', status: 'pending' },
-  { id: 4, full_name: 'Khadija Noor', email: 'khadija@example.com', status: 'approved' },
-  { id: 5, full_name: 'Ibrahim Malik', email: 'ibrahim@example.com', status: 'rejected' },
-]);
-
-const topDonors = ref([
-  { name: 'Abdul Karim', email: 'abdul@example.com', total_donated: 12500 },
-  { name: 'Zainab Hussain', email: 'zainab@example.com', total_donated: 9800 },
-  { name: 'Muhammad Iqbal', email: 'iqbal@example.com', total_donated: 7450 },
-  { name: 'Safiya Ahmad', email: 'safiya@example.com', total_donated: 6200 },
-  { name: 'Hamza Yusuf', email: 'hamza@example.com', total_donated: 5100 },
-]);
-
-const recentMessages = ref([
-  { id: 1, full_name: 'Sara Ahmed', subject: 'Question about youth programs', is_read: false, created_at: new Date(Date.now() - 1000 * 60 * 45) },
-  { id: 2, full_name: 'Tariq Mehmood', subject: 'Volunteer inquiry', is_read: false, created_at: new Date(Date.now() - 1000 * 60 * 60 * 3) },
-  { id: 3, full_name: 'Nadia Islam', subject: 'Donation receipt request', is_read: true, created_at: new Date(Date.now() - 1000 * 60 * 60 * 8) },
-  { id: 4, full_name: 'Rashid Khan', subject: 'Event registration help', is_read: false, created_at: new Date(Date.now() - 1000 * 60 * 60 * 20) },
-  { id: 5, full_name: 'Laila Fatima', subject: 'Partnership opportunity', is_read: true, created_at: new Date(Date.now() - 1000 * 60 * 60 * 30) },
-]);
-
-// ============ HELPERS ============
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount || 0);
-};
+  }).format(amount || 0)
+}
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
+    month: 'short', day: 'numeric', year: 'numeric',
+  })
+}
 
 const formatDateTime = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
+    month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
+}
 
 const timeAgo = (date) => {
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-  if (seconds < 60) return 'just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return formatDate(date);
-};
+  const seconds = Math.floor((new Date() - new Date(date)) / 1000)
+  if (seconds < 60) return 'just now'
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
+  return formatDate(date)
+}
 
-// ============ STAT CARDS ============
+const donationTypeLabel = (type) => (type === 'monthly' ? 'Monthly' : 'One-time')
+
+const statusBadge = (status) => {
+  const map = {
+    pending:  { bg: 'bg-amber-100',   text: 'text-amber-700' },
+    approved: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+    rejected: { bg: 'bg-red-100',     text: 'text-red-700' },
+    active:   { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+    inactive: { bg: 'bg-gray-100',    text: 'text-gray-700' },
+  }
+  return map[status] || { bg: 'bg-gray-100', text: 'text-gray-700' }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STAT CARDS
+   ═══════════════════════════════════════════════════════════ */
 const statCards = computed(() => [
   {
     label: 'Total Donations',
-    value: formatCurrency(stats.value.total_donations),
-    sub: `${formatCurrency(stats.value.donations_this_month)} this month`,
+    value: formatCurrency(props.stats.total_donations),
+    sub: `${formatCurrency(props.stats.donations_this_month)} this month`,
     icon: 'fa-solid fa-hand-holding-dollar',
     bgLight: 'bg-emerald-50',
     textColor: 'text-emerald-600',
@@ -129,8 +81,8 @@ const statCards = computed(() => [
   },
   {
     label: 'Total Volunteers',
-    value: stats.value.total_volunteers,
-    sub: `${stats.value.pending_volunteers} pending approval`,
+    value: props.stats.total_volunteers,
+    sub: `${props.stats.pending_volunteers} pending approval`,
     icon: 'fa-solid fa-hands-helping',
     bgLight: 'bg-blue-50',
     textColor: 'text-blue-600',
@@ -138,8 +90,8 @@ const statCards = computed(() => [
   },
   {
     label: 'Active Members',
-    value: stats.value.active_members,
-    sub: `${stats.value.total_members} total members`,
+    value: props.stats.active_members,
+    sub: `${props.stats.total_members} total members`,
     icon: 'fa-solid fa-users',
     bgLight: 'bg-purple-50',
     textColor: 'text-purple-600',
@@ -147,8 +99,8 @@ const statCards = computed(() => [
   },
   {
     label: 'Upcoming Events',
-    value: stats.value.upcoming_events,
-    sub: `${stats.value.total_events} total events`,
+    value: props.stats.upcoming_events,
+    sub: `${props.stats.total_events} total events`,
     icon: 'fa-solid fa-calendar-days',
     bgLight: 'bg-amber-50',
     textColor: 'text-amber-600',
@@ -156,7 +108,7 @@ const statCards = computed(() => [
   },
   {
     label: 'Event Registrations',
-    value: stats.value.total_registrations,
+    value: props.stats.total_registrations,
     sub: 'Total registrations',
     icon: 'fa-solid fa-clipboard-list',
     bgLight: 'bg-rose-50',
@@ -165,7 +117,7 @@ const statCards = computed(() => [
   },
   {
     label: 'Newsletter Subscribers',
-    value: stats.value.newsletter_subscribers,
+    value: props.stats.newsletter_subscribers,
     sub: 'Active subscribers',
     icon: 'fa-solid fa-envelope',
     bgLight: 'bg-cyan-50',
@@ -174,8 +126,8 @@ const statCards = computed(() => [
   },
   {
     label: 'Active Programs',
-    value: stats.value.active_programs,
-    sub: `${stats.value.total_programs} total programs`,
+    value: props.stats.active_programs,
+    sub: `${props.stats.total_programs} total programs`,
     icon: 'fa-solid fa-graduation-cap',
     bgLight: 'bg-indigo-50',
     textColor: 'text-indigo-600',
@@ -183,44 +135,37 @@ const statCards = computed(() => [
   },
   {
     label: 'Unread Messages',
-    value: stats.value.unread_messages,
+    value: props.stats.unread_messages,
     sub: 'Need your attention',
     icon: 'fa-solid fa-envelope-open-text',
     bgLight: 'bg-red-50',
     textColor: 'text-red-600',
     barColor: 'from-red-500 to-red-600',
-    alert: stats.value.unread_messages > 0,
+    alert: props.stats.unread_messages > 0,
   },
-]);
+])
 
-// ============ QUICK ACTIONS ============
+/* ═══════════════════════════════════════════════════════════
+   QUICK ACTIONS
+   ═══════════════════════════════════════════════════════════ */
 const quickActions = [
-  { label: 'Add Program', icon: 'fa-solid fa-plus', color: 'bg-indigo-500 hover:bg-indigo-600' },
-  { label: 'Create Event', icon: 'fa-solid fa-calendar-plus', color: 'bg-amber-500 hover:bg-amber-600' },
-  { label: 'New Campaign', icon: 'fa-solid fa-bullhorn', color: 'bg-emerald-500 hover:bg-emerald-600' },
-  { label: 'View Donations', icon: 'fa-solid fa-list', color: 'bg-blue-500 hover:bg-blue-600' },
-];
+  { label: 'Add Program',    icon: 'fa-solid fa-plus',          color: 'bg-indigo-500 hover:bg-indigo-600',   href: '#' },
+  { label: 'Create Event',   icon: 'fa-solid fa-calendar-plus', color: 'bg-amber-500 hover:bg-amber-600',     href: '#' },
+  { label: 'New Campaign',   icon: 'fa-solid fa-bullhorn',      color: 'bg-emerald-500 hover:bg-emerald-600', href: '#' },
+  { label: 'View Donations', icon: 'fa-solid fa-list',          color: 'bg-blue-500 hover:bg-blue-600',       href: '#' },
+]
 
-// ============ CHART HELPERS ============
+/* ═══════════════════════════════════════════════════════════
+   CHART
+   ═══════════════════════════════════════════════════════════ */
 const donationChartMax = computed(() => {
-  if (!donationChart.value.length) return 1;
-  return Math.max(...donationChart.value.map(d => d.total)) * 1.15;
-});
+  if (!props.donationChart.length) return 1
+  return Math.max(...props.donationChart.map(d => d.total)) * 1.15
+})
 
-const statusBadge = (status) => {
-  const map = {
-    pending: { bg: 'bg-amber-100', text: 'text-amber-700' },
-    approved: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
-    rejected: { bg: 'bg-red-100', text: 'text-red-700' },
-    active: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
-    inactive: { bg: 'bg-gray-100', text: 'text-gray-700' },
-  };
-  return map[status] || { bg: 'bg-gray-100', text: 'text-gray-700' };
-};
-
-const donationTypeLabel = (type) => (type === 'monthly' ? 'Monthly' : 'One-time');
-
-const currentDate = new Date();
+const donationTypesTotal = computed(() =>
+  props.donationTypes.reduce((sum, t) => sum + t.total, 0)
+)
 </script>
 
 <template>
@@ -230,7 +175,7 @@ const currentDate = new Date();
     <div class="min-h-screen w-full bg-gray-50">
       <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-6">
 
-        <!-- ============ WELCOME HEADER ============ -->
+        <!-- ═══════════ WELCOME HEADER ═══════════ -->
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003d2c] via-[#00583f] to-[#006b4e] shadow-xl mb-6">
           <div class="absolute inset-0 opacity-10"
             style="background-image: radial-gradient(circle at 20% 50%, #d9a52b 0%, transparent 50%), radial-gradient(circle at 80% 80%, #d9a52b 0%, transparent 40%);">
@@ -262,7 +207,7 @@ const currentDate = new Date();
                 </div>
               </div>
 
-              <Link href="#"
+              <Link :href="route('events.index')"
                 class="inline-flex items-center gap-2 bg-[#d9a52b] hover:bg-[#c9951f] text-white text-sm font-bold px-5 py-3 rounded-lg transition-all hover:shadow-lg hover:-translate-y-0.5">
                 <i class="fa-solid fa-plus"></i>
                 <span class="hidden sm:inline">New Event</span>
@@ -271,7 +216,7 @@ const currentDate = new Date();
           </div>
         </div>
 
-        <!-- ============ STAT CARDS GRID ============ -->
+        <!-- ═══════════ STAT CARDS GRID ═══════════ -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div v-for="(card, index) in statCards" :key="index"
             class="group relative bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
@@ -300,24 +245,8 @@ const currentDate = new Date();
           </div>
         </div>
 
-        <!-- ============ QUICK ACTIONS ============ -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-gray-900 font-bold text-base flex items-center gap-2">
-              <i class="fa-solid fa-bolt text-[#d9a52b]"></i>
-              Quick Actions
-            </h2>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link v-for="action in quickActions" :key="action.label" href="#"
-              :class="[action.color, 'flex items-center gap-2 justify-center text-white text-xs font-bold px-4 py-3 rounded-lg transition-all hover:shadow-md hover:-translate-y-0.5']">
-              <i :class="action.icon"></i>
-              <span>{{ action.label }}</span>
-            </Link>
-          </div>
-        </div>
 
-        <!-- ============ CHARTS ROW ============ -->
+        <!-- ═══════════ CHARTS ROW ═══════════ -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
           <!-- Donation Chart -->
@@ -335,7 +264,7 @@ const currentDate = new Date();
               </div>
             </div>
 
-            <div class="flex items-end justify-between gap-1.5 h-48">
+            <div v-if="donationChart.length" class="flex items-end justify-between gap-1.5 h-48">
               <div v-for="(item, i) in donationChart" :key="i" class="flex-1 flex flex-col items-center gap-2 group">
                 <div class="relative w-full flex justify-center">
                   <div class="absolute -top-8 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap pointer-events-none z-10">
@@ -350,6 +279,10 @@ const currentDate = new Date();
                   {{ new Date(item.month + '-01').toLocaleDateString('en-US', { month: 'short' }) }}
                 </span>
               </div>
+            </div>
+
+            <div v-else class="flex items-center justify-center h-48 text-sm text-gray-400">
+              No donation data yet
             </div>
           </div>
 
@@ -378,14 +311,14 @@ const currentDate = new Date();
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-gray-500 uppercase">Total</span>
                 <span class="text-lg font-bold text-[#00583f]">
-                  {{ formatCurrency(donationTypes.reduce((sum, t) => sum + t.total, 0)) }}
+                  {{ formatCurrency(donationTypesTotal) }}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- ============ MAIN CONTENT GRID ============ -->
+        <!-- ═══════════ MAIN CONTENT GRID ═══════════ -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
           <!-- Recent Donations -->
@@ -395,11 +328,11 @@ const currentDate = new Date();
                 <i class="fa-solid fa-hand-holding-dollar text-emerald-500"></i>
                 Recent Donations
               </h3>
-              <Link href="#" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
+              <Link :href="route('donations.index')" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
                 View All <i class="fa-solid fa-arrow-right text-[9px]"></i>
               </Link>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div v-if="recentDonations.length" class="divide-y divide-gray-50">
               <div v-for="donation in recentDonations" :key="donation.id"
                 class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
                 <div class="flex items-center gap-3 min-w-0">
@@ -417,6 +350,9 @@ const currentDate = new Date();
                 </div>
               </div>
             </div>
+            <div v-else class="px-5 py-10 text-center text-xs text-gray-400">
+              No donations yet
+            </div>
           </div>
 
           <!-- Upcoming Events -->
@@ -426,11 +362,11 @@ const currentDate = new Date();
                 <i class="fa-solid fa-calendar-days text-amber-500"></i>
                 Upcoming Events
               </h3>
-              <Link href="#" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
+              <Link :href="route('events.index')" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
                 View All <i class="fa-solid fa-arrow-right text-[9px]"></i>
               </Link>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div v-if="upcomingEvents.length" class="divide-y divide-gray-50">
               <div v-for="event in upcomingEvents" :key="event.id"
                 class="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors">
                 <div class="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-amber-400 to-amber-600 flex-shrink-0">
@@ -451,6 +387,9 @@ const currentDate = new Date();
                 </div>
               </div>
             </div>
+            <div v-else class="px-5 py-10 text-center text-xs text-gray-400">
+              No upcoming events
+            </div>
           </div>
 
           <!-- Recent Volunteers -->
@@ -460,11 +399,11 @@ const currentDate = new Date();
                 <i class="fa-solid fa-hands-helping text-blue-500"></i>
                 Recent Volunteers
               </h3>
-              <Link href="#" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
+              <Link :href="route('volunteer.index')" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
                 View All <i class="fa-solid fa-arrow-right text-[9px]"></i>
               </Link>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div v-if="recentVolunteers.length" class="divide-y divide-gray-50">
               <div v-for="volunteer in recentVolunteers" :key="volunteer.id"
                 class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
                 <div class="flex items-center gap-3 min-w-0">
@@ -481,10 +420,13 @@ const currentDate = new Date();
                 </span>
               </div>
             </div>
+            <div v-else class="px-5 py-10 text-center text-xs text-gray-400">
+              No volunteers yet
+            </div>
           </div>
         </div>
 
-        <!-- ============ BOTTOM ROW ============ -->
+        <!-- ═══════════ BOTTOM ROW ═══════════ -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           <!-- Top Donors -->
@@ -496,7 +438,7 @@ const currentDate = new Date();
               </h3>
               <span class="text-[10px] font-bold text-gray-400 uppercase">All Time</span>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div v-if="topDonors.length" class="divide-y divide-gray-50">
               <div v-for="(donor, index) in topDonors" :key="index"
                 class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
                 <div class="flex items-center gap-3">
@@ -517,6 +459,9 @@ const currentDate = new Date();
                 <p class="text-sm font-bold text-[#00583f]">{{ formatCurrency(donor.total_donated) }}</p>
               </div>
             </div>
+            <div v-else class="px-5 py-10 text-center text-xs text-gray-400">
+              No donor data yet
+            </div>
           </div>
 
           <!-- Recent Messages -->
@@ -530,11 +475,11 @@ const currentDate = new Date();
                   {{ stats.unread_messages }} new
                 </span>
               </h3>
-              <Link href="#" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
+              <Link :href="route('contact-messages.index')" class="text-[11px] font-bold text-[#00583f] hover:text-[#d9a52b] transition-colors">
                 View All <i class="fa-solid fa-arrow-right text-[9px]"></i>
               </Link>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div v-if="recentMessages.length" class="divide-y divide-gray-50">
               <div v-for="message in recentMessages" :key="message.id"
                 class="flex items-start gap-3 px-5 py-3 hover:bg-gray-50 transition-colors cursor-pointer">
                 <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -550,6 +495,9 @@ const currentDate = new Date();
                   <p class="text-[10px] text-gray-400 mt-0.5">{{ timeAgo(message.created_at) }}</p>
                 </div>
               </div>
+            </div>
+            <div v-else class="px-5 py-10 text-center text-xs text-gray-400">
+              No messages yet
             </div>
           </div>
         </div>

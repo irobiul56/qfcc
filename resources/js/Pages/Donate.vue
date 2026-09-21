@@ -1,24 +1,21 @@
 <template>
-  <AppLayout title="Donate to QFCC — Queens Family and Community Center"
-    description="Support QFCC's mission to strengthen families, empower youth, support seniors, welcome newcomers, and respond when neighbors need a hand.">
+  <AppLayout
+    title="Donate to QFCC — Queens Family and Community Center"
+    description="Support QFCC's mission to strengthen families, empower youth, support seniors, welcome newcomers, and respond when neighbors need a hand."
+  >
     <main>
-      <!-- HERO with blurred background image (Nuclear Option — uses <img>) -->
+      <!-- HERO -->
       <section class="donate-hero">
-        <!-- Background image as <img> with object-cover + blur -->
-        <img 
-          src="/storage/images/calligraphics.jpg" 
-          alt="" 
+        <img
+          src="/storage/images/calligraphics.jpg"
+          alt=""
           aria-hidden="true"
           class="donate-hero-bg-img"
         />
-        
-        <!-- Overlay gradient -->
-        <div class="donate-hero-overlay"></div>
 
-        <!-- Gold bottom border -->
+        <div class="donate-hero-overlay"></div>
         <div class="donate-hero-border"></div>
 
-        <!-- Content -->
         <div class="relative z-[3] mx-auto max-w-[1250px] px-5 py-14 text-center sm:px-8 lg:py-20">
           <p class="donate-kicker">
             <i class="fas fa-hand-holding-heart mr-2"></i>QFCC COMMUNITY GIVING
@@ -29,7 +26,8 @@
             newcomers, and respond when neighbors need a hand.
           </p>
 
-          <!-- Quick action buttons -->
+      
+
           <div class="mt-8 flex flex-wrap justify-center gap-4">
             <a href="#campaigns" class="btn btn-gold">
               <i class="fas fa-donate mr-2"></i>GIVE NOW
@@ -39,7 +37,6 @@
             </a>
           </div>
 
-          <!-- Trust indicators -->
           <div class="mt-10 flex flex-wrap justify-center items-center gap-6 text-white/70 text-xs">
             <span class="flex items-center gap-2">
               <i class="fas fa-shield-alt text-[#d9a52b]"></i> Secure Donation
@@ -70,19 +67,70 @@
             </p>
           </div>
 
-          <div class="donate-campaign-grid">
-            <a v-for="(campaign, index) in campaigns" :key="index" :href="campaign.link"
-              class="donate-campaign-card group">
+          <!-- Empty state -->
+          <div
+            v-if="campaigns.length === 0"
+            class="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-slate-200"
+          >
+            <i class="fas fa-hand-holding-heart text-4xl text-slate-300 mb-4"></i>
+            <p class="text-slate-500">No active campaigns at the moment. Check back soon.</p>
+          </div>
+
+          <!-- Grid -->
+          <div v-else class="donate-campaign-grid">
+            <a
+              v-for="campaign in campaigns"
+              :key="campaign.id"
+              :href="campaign.link"
+              class="donate-campaign-card group"
+            >
+              <!-- Image -->
               <div class="relative overflow-hidden rounded-2xl mb-4">
-                <img :src="campaign.image" :alt="campaign.title"
-                  class="w-full aspect-video object-cover rounded-2xl transition duration-500 group-hover:scale-105" />
+                <img
+                  :src="campaign.image"
+                  :alt="campaign.title"
+                  class="w-full aspect-video object-cover rounded-2xl transition duration-500 group-hover:scale-105"
+                />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div class="absolute top-3 right-3 w-10 h-10 rounded-full bg-[#d9a52b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                   <i class="fas fa-heart text-white"></i>
                 </div>
+
+                <!-- Featured badge -->
+                <span
+                  v-if="campaign.is_featured"
+                  class="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#d9a52b] text-[#1e1e1e] text-[10px] font-bold uppercase tracking-wider shadow-lg"
+                >
+                  <i class="fas fa-star"></i>Featured
+                </span>
               </div>
+
+              <!-- Title + description -->
               <h3>{{ campaign.title }}</h3>
               <p>{{ campaign.description }}</p>
+
+              <!-- Progress bar -->
+              <!-- <div class="mt-3 mb-4">
+                <div class="flex items-center justify-between mb-1.5 text-xs">
+                  <span class="font-semibold text-[#00583f]">
+                    ${{ formatMoney(campaign.raised_amount) }}
+                  </span>
+                  <span class="text-slate-500">
+                    of ${{ formatMoney(campaign.goal_amount) }}
+                  </span>
+                </div>
+                <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    class="h-full rounded-full bg-gradient-to-r from-[#00583f] to-[#d9a52b] transition-all duration-700"
+                    :style="{ width: campaign.progress_percent + '%' }"
+                  ></div>
+                </div>
+                <p class="mt-1.5 text-[11px] text-slate-500">
+                  <span class="font-semibold text-[#00583f]">{{ campaign.progress_percent }}%</span>
+                  funded
+                </p>
+              </div> -->
+
               <span class="donate-campaign-link">
                 DONATE <b>→</b>
               </span>
@@ -90,7 +138,6 @@
           </div>
         </div>
       </section>
-
 
       <!-- QUOTE / TRUST -->
       <section class="donate-trust mx-auto max-w-[950px] px-5 py-14 text-center sm:px-8 lg:py-20">
@@ -130,57 +177,22 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-// Campaign data — replace with props from controller if needed
-const campaigns = [
-  {
-    title: 'Community Support',
-    description: "Keep QFCC's essential services and community programs moving forward.",
-    image: '/storage/images/story-mosque.jpg',
-    link: '#'
-  },
-  {
-    title: 'Family Relief',
-    description: 'Provide compassionate guidance, resources, and stability for families in need.',
-    image: '/storage/images/support.png',
-    link: '#'
-  },
-  {
-    title: 'Youth Opportunity',
-    description: 'Help young people grow through mentorship, leadership, and learning.',
-    image: '/storage/images/event-youth.jpg',
-    link: '#'
-  },
-  {
-    title: 'Food & Humanitarian Relief',
-    description: 'Meet urgent needs with food assistance, outreach, and dependable care.',
-    image: '/storage/images/event-health.jpg',
-    link: '#'
-  },
-  {
-    title: 'Volunteer Action',
-    description: 'Help more volunteers serve neighbors with time, care, and practical support.',
-    image: '/storage/images/volunteer.png',
-    link: '#'
-  },
-  {
-    title: 'Family Wellbeing',
-    description: 'Help families move forward safely, healthfully, and with dignity.',
-    image: '/storage/images/why-family.jpg',
-    link: '#'
-  },
-  {
-    title: 'Member Support',
-    description: 'Build a lasting foundation of services for QFCC community members.',
-    image: '/storage/images/member.png',
-    link: '#'
-  },
-  {
-    title: 'General Fund',
-    description: 'Help QFCC respond quickly wherever the need is greatest.',
-    image: '/storage/images/calligraphy.jpg',
-    link: '#'
-  }
-]
+/* --- Props from Inertia --- */
+const props = defineProps({
+  campaigns: { type: Array,  default: () => [] },
+  featured:  { type: Object, default: null },
+  stats:     { type: Object, default: null },
+})
+
+/* --- Helpers --- */
+function formatMoney(amount) {
+  if (amount === null || amount === undefined) return '0'
+  const num = Number(amount)
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })
+}
 </script>
 
 <style scoped>
@@ -191,10 +203,6 @@ const campaigns = [
   min-height: 400px;
 }
 
-/* 
-  Background image as <img> — the browser resolves /storage/... natively.
-  This bypasses all Vite CSS url() resolution issues.
-*/
 .donate-hero-bg-img {
   position: absolute;
   inset: 0;
@@ -205,12 +213,10 @@ const campaigns = [
   z-index: 0;
   filter: blur(4px) brightness(0.5);
   transform: scale(1.05);
-  /* Prevent any drag/selection */
   user-select: none;
   pointer-events: none;
 }
 
-/* Overlay gradient on top of the blurred image */
 .donate-hero-overlay {
   position: absolute;
   inset: 0;
@@ -220,7 +226,6 @@ const campaigns = [
   opacity: 0.7;
 }
 
-/* Gold bottom border */
 .donate-hero-border {
   position: absolute;
   bottom: 0;
@@ -233,7 +238,6 @@ const campaigns = [
   pointer-events: none;
 }
 
-/* Ensure content sits above all background layers */
 .donate-hero > .relative {
   position: relative;
   z-index: 3;

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Visions_missions extends Model
+class NewsletterSubscriber extends Model
 {
     //
 }

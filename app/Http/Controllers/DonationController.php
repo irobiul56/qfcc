@@ -3,107 +3,174 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use App\Models\DonationCampaign;
+use App\Models\Transaction;
+use App\Services\DonationService;
 use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DonationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    public function __construct(
+        protected DonationService $donations
+    ) {}
 
     /**
-     * Show the form for creating a new resource.
+     * Admin dashboard — list all donations.
      */
-    public function create()
+    public function index(Request $request): Response
     {
-        //
-    }
+        $query = Donation::with(['campaign:id,title,slug', 'transaction'])
+            ->latest();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-         $donation = Donation::findOrFail($id);
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'required|string',
-
-        ]);
-
-        $updateData = [
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-        ];
-
-        $donation->update($updateData);
-
-        return redirect()->back()->with('success', 'Donation updated successfully!');
-    }
-
-    //updateImage
-
-    public function updateImage(Request $request, string $id)
-    {
-
-         $donation = Donation::findOrFail($id);
-
-         $validated = $request->validate([
-            'main_image' => 'nullable|image|max:2048'
-        ]);
-
-        if ($request->hasFile('main_image')) {
-            // Delete old image
-            if ($donation->main_image) {
-                Storage::delete('public/' . $donation->main_image);
-            }
-
-            // Store new image
-            $path = $request->file('main_image')->store('images/donation', 'public');
-            $validated['main_image'] = $path;
+        // Search
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('donor_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
         }
 
-        $donation->update($validated);
+        // Filter by campaign
+        if ($campaignId = $request->input('campaign_id')) {
+            $query->where('donation_campaign_id', $campaignId);
+        }
 
-        return back()->with('success', 'Donation section updated successfully!');
+        // Filter by status
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Filter by payment method
+        if ($method = $request->input('payment_method')) {
+            $query->where('payment_method', $method);
+        }
+
+        // Filter by type
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
+        }
+
+        // ─── Stats ───
+        $stats = [
+            'total_completed'  => (float) Donation::completed()->sum('amount'),
+            'total_pending'    => (float) Donation::pending()->sum('amount'),
+            'total_refunded'   => (float) Donation::refunded()->sum('amount'),
+            'donors_count'     => Donation::completed()->distinct('email')->count('email'),
+            'today'            => (float) Donation::completed()->whereDate('created_at', today())->sum('amount'),
+            'this_month'       => (float) Donation::completed()->whereMonth('created_at', now()->month)->sum('amount'),
+        ];
+
+        return Inertia::render('Dashboard/Donations/Index', [
+            'donations' => $query->paginate(20)->withQueryString(),
+            'stats'     => $stats,
+            'campaigns' => DonationCampaign::orderBy('title')->get(['id', 'title']),
+            'filters'   => [
+                'search'         => $request->input('search', ''),
+                'status'         => $request->input('status', ''),
+                'campaign_id'    => $request->input('campaign_id', ''),
+                'payment_method' => $request->input('payment_method', ''),
+                'type'           => $request->input('type', ''),
+            ],
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Admin — verify a pending transaction.
      */
-    public function destroy(string $id)
+    public function verify(Transaction $transaction)
     {
-        //
+        abort_unless(Auth::check(), 403);
+
+        $this->donations->verifyPending($transaction, Auth::id());
+
+        return back()->with('success', "Transaction {$transaction->reference} verified and confirmed.");
+    }
+
+    /**
+     * Admin — refund a completed donation.
+     */
+    public function refund(Request $request, Transaction $transaction)
+    {
+        abort_unless(Auth::check(), 403);
+
+        $request->validate([
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $this->donations->refund($transaction, $request->input('reason'));
+
+        return back()->with('success', "Transaction {$transaction->reference} refunded.");
+    }
+
+    /**
+     * Admin — delete a donation (soft delete).
+     */
+    public function destroy(Donation $donation)
+    {
+        abort_unless(Auth::check(), 403);
+
+        $donation->delete();
+
+        return back()->with('success', 'Donation deleted.');
+    }
+
+    /**
+     * Admin — export donations as CSV.
+     */
+    public function export(Request $request): StreamedResponse
+    {
+        $filename = 'donations-' . now()->format('Y-m-d') . '.csv';
+
+        $query = Donation::with(['campaign:id,title', 'transaction']);
+
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+        if ($campaignId = $request->input('campaign_id')) {
+            $query->where('donation_campaign_id', $campaignId);
+        }
+        if ($method = $request->input('payment_method')) {
+            $query->where('payment_method', $method);
+        }
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
+        }
+
+        return response()->streamDownload(function () use ($query) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, [
+                'ID', 'Reference', 'Campaign', 'Donor Name', 'Email', 'Phone',
+                'Amount', 'Currency', 'Type', 'Status', 'Payment Method',
+                'Anonymous', 'Message', 'Created At',
+            ]);
+
+            $query->chunk(500, function ($chunk) use ($handle) {
+                foreach ($chunk as $d) {
+                    fputcsv($handle, [
+                        $d->id,
+                        $d->transaction?->reference,
+                        $d->campaign?->title,
+                        $d->donor_name,
+                        $d->email,
+                        $d->phone,
+                        $d->amount,
+                        $d->currency,
+                        $d->type,
+                        $d->status,
+                        $d->payment_method,
+                        $d->is_anonymous ? 'Yes' : 'No',
+                        $d->message,
+                        $d->created_at->toDateTimeString(),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
     }
 }

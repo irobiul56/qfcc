@@ -6,7 +6,7 @@ import { ref, computed, reactive } from 'vue'
 import { usePage } from '@inertiajs/vue3';
 import { ElMessage, ElDialog, ElForm, ElFormItem, ElInput, ElSelect, ElOption } from "element-plus";
 import { router } from '@inertiajs/vue3'
-import CKEditor from '@/Components/CKEditor.vue';
+import CKEditor from '@/Components/QuillEditor.vue';
 
 const { props } = usePage()
 const contactlist = ref(props.contactlist)

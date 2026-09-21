@@ -220,7 +220,7 @@ import UserLayout from "@/Layouts/UserLayout.vue";
 import { useForm, usePage } from '@inertiajs/vue3';
 import { Head } from "@inertiajs/vue3";
 import { ElMessage } from 'element-plus';
-import CKEditor from '@/Components/CKEditor.vue';
+import CKEditor from '@/Components/QuillEditor.vue';
 
 const { props } = usePage()
 const category = ref(props.category)

@@ -39,7 +39,7 @@
                 </Link>
               </li> -->
               <li>
-                <Link :href="route('events')" class="hover:text-blue-600 transition-colors py-2 px-3 rounded-lg" :class="{ 'text-blue-600 border-b-2 border-blue-600': $page.url === '/events' }">
+                <Link :href="route('event.create')" class="hover:text-blue-600 transition-colors py-2 px-3 rounded-lg" :class="{ 'text-blue-600 border-b-2 border-blue-600': $page.url === '/event' }">
                   EVENTS
                 </Link>
               </li>
@@ -96,9 +96,6 @@
           <Link :href="route('home')" class="block px-3 py-2 rounded-md text-base font-medium transition-colors" :class="$page.url === '/' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'">Home</Link>
           <Link :href="route('about')" class="block px-3 py-2 rounded-md text-base font-medium transition-colors" :class="$page.url === '/about' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'">About Us</Link>
           <Link :href="route('programs')" class="block px-3 py-2 rounded-md text-base font-medium transition-colors" :class="$page.url === '/programs-and-services' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'">Programs and Services</Link>
-          <a href="#photos" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 transition-colors">Gallery</a>
-          <Link :href="route('blog')" class="block px-3 py-2 rounded-md text-base font-medium transition-colors" :class="$page.url === '/blog' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'">Blogs</Link>
-          <Link :href="route('notice')" class="block px-3 py-2 rounded-md text-base font-medium transition-colors" :class="$page.url === '/notice' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'">Notice</Link>
           <Link :href="route('contact')" class="block px-3 py-2 rounded-md text-base font-medium transition-colors" :class="$page.url === '/contact' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'">Contact</Link>
         </div>
       </div>

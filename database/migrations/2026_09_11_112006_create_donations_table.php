@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('donation_campaign_id')->nullable()->constrained('donation_campaigns')->nullOnDelete();
             $table->string('donor_name')->nullable();
             $table->string('email');
             $table->string('phone')->nullable();

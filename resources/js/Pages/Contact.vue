@@ -6,7 +6,6 @@
     <main>
       <!-- ================= HERO ================= -->
       <section class="relative overflow-hidden bg-gradient-to-br from-[#002d21] via-[#003c2b] to-[#00583f] text-white">
-        <!-- Decorative pattern -->
         <div class="contact-hero-pattern pointer-events-none absolute inset-0 opacity-[0.08]"></div>
 
         <div
@@ -42,7 +41,7 @@
             <div class="mt-8 flex flex-wrap gap-4">
               <a
                 href="#contact-form"
-                class="inline-flex items-center justify-center rounded-full bg-[#e0ac2e] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-[#002d21] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#c9991f] hover:shadow-[0_10px_30px_rgba(224,172,46,0.35)] group"
+                class="group inline-flex items-center justify-center rounded-full bg-[#e0ac2e] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-[#002d21] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#c9991f] hover:shadow-[0_10px_30px_rgba(224,172,46,0.35)]"
               >
                 SEND A MESSAGE
                 <i class="fas fa-arrow-down ml-2 transition-transform group-hover:translate-y-1"></i>
@@ -98,7 +97,7 @@
           <!-- Detail list -->
           <div class="mt-8 flex flex-col gap-3">
             <a
-              href="tel:+17188718030"
+              href="tel:+13472335473"
               class="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#00583f]/20 hover:shadow-[0_15px_35px_rgba(0,88,63,0.1)]"
             >
               <span
@@ -107,9 +106,7 @@
                 <i class="fas fa-phone-alt"></i>
               </span>
               <span class="flex flex-col">
-                <small class="text-[0.6rem] font-extrabold uppercase tracking-[0.15em] text-[#e0ac2e]">
-                  CALL US
-                </small>
+                <small class="text-[0.6rem] font-extrabold uppercase tracking-[0.15em] text-[#e0ac2e]">CALL US</small>
                 <strong class="text-sm font-bold text-[#00583f]">(347) 233-5473</strong>
               </span>
             </a>
@@ -124,9 +121,7 @@
                 <i class="fas fa-envelope"></i>
               </span>
               <span class="flex flex-col">
-                <small class="text-[0.6rem] font-extrabold uppercase tracking-[0.15em] text-[#e0ac2e]">
-                  EMAIL US
-                </small>
+                <small class="text-[0.6rem] font-extrabold uppercase tracking-[0.15em] text-[#e0ac2e]">EMAIL US</small>
                 <strong class="text-sm font-bold text-[#00583f]">info@QFCC.org</strong>
               </span>
             </a>
@@ -151,9 +146,7 @@
           </div>
 
           <!-- Hours note -->
-          <div
-            class="mt-8 flex items-start gap-4 rounded-2xl border-l-4 border-[#e0ac2e] bg-[#fbfaf4] p-5"
-          >
+          <div class="mt-8 flex items-start gap-4 rounded-2xl border-l-4 border-[#e0ac2e] bg-[#fbfaf4] p-5">
             <span
               class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#e0ac2e]/20 text-lg text-[#e0ac2e]"
             >
@@ -173,11 +166,35 @@
         <!-- Contact form -->
         <form
           id="contact-form"
-          action="#"
-          method="post"
+          @submit.prevent="submit"
           class="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-7 shadow-[0_10px_40px_rgba(0,65,47,0.08)] sm:p-10"
         >
           <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#e0ac2e] via-[#00583f] to-[#e0ac2e]"></div>
+
+          <!-- Success banner -->
+          <Transition
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-200 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <div
+              v-if="showSuccess"
+              class="mb-7 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4"
+            >
+              <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                <i class="fas fa-check text-sm"></i>
+              </span>
+              <div>
+                <p class="text-sm font-bold text-emerald-800">Thank you — your message has been sent!</p>
+                <p class="mt-1 text-xs leading-6 text-emerald-700">
+                  We'll review it and get back to you soon. You can send another message below.
+                </p>
+              </div>
+            </div>
+          </Transition>
 
           <!-- Form heading -->
           <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -196,59 +213,110 @@
 
           <!-- Form grid -->
           <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <!-- Full name -->
             <label class="flex flex-col gap-2">
               <span class="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-[#00583f]">
                 <i class="fas fa-user mr-1 text-[#e0ac2e]"></i>YOUR NAME
+                <span class="text-rose-500">*</span>
               </span>
               <input
+                v-model="form.full_name"
                 type="text"
-                name="name"
                 placeholder="First and last name"
-                required
-                class="rounded-xl border border-slate-200 bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-[#00583f] focus:bg-white focus:ring-4 focus:ring-[#00583f]/10"
+                class="rounded-xl border bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:ring-4"
+                :class="form.errors.full_name
+                  ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/10'
+                  : 'border-slate-200 focus:border-[#00583f] focus:ring-[#00583f]/10'"
               />
+              <p v-if="form.errors.full_name" class="flex items-center gap-1.5 text-xs text-rose-600">
+                <i class="fas fa-circle-exclamation text-[10px]"></i>
+                {{ form.errors.full_name }}
+              </p>
             </label>
 
+            <!-- Email -->
             <label class="flex flex-col gap-2">
               <span class="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-[#00583f]">
                 <i class="fas fa-envelope mr-1 text-[#e0ac2e]"></i>EMAIL ADDRESS
+                <span class="text-rose-500">*</span>
               </span>
               <input
+                v-model="form.email"
                 type="email"
-                name="email"
                 placeholder="you@example.com"
-                required
-                class="rounded-xl border border-slate-200 bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-[#00583f] focus:bg-white focus:ring-4 focus:ring-[#00583f]/10"
+                class="rounded-xl border bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:ring-4"
+                :class="form.errors.email
+                  ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/10'
+                  : 'border-slate-200 focus:border-[#00583f] focus:ring-[#00583f]/10'"
               />
+              <p v-if="form.errors.email" class="flex items-center gap-1.5 text-xs text-rose-600">
+                <i class="fas fa-circle-exclamation text-[10px]"></i>
+                {{ form.errors.email }}
+              </p>
             </label>
           </div>
 
+          <!-- Phone -->
           <label class="mt-5 flex flex-col gap-2">
             <span class="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-[#00583f]">
-              <i class="fas fa-comment-dots mr-1 text-[#e0ac2e]"></i>WHAT CAN WE HELP WITH?
+              <i class="fas fa-phone mr-1 text-[#e0ac2e]"></i>PHONE NUMBER
+              <span class="ml-1 text-[10px] font-medium normal-case tracking-normal text-slate-400">(optional)</span>
             </span>
-            <select
-              name="topic"
-              class="appearance-none rounded-xl border border-slate-200 bg-[#fbfaf4]/50 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2300583f%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22/></svg>')] bg-[length:14px] bg-[right_1rem_center] bg-no-repeat px-4 py-3.5 pr-10 text-sm text-slate-700 outline-none transition-all duration-300 focus:border-[#00583f] focus:bg-white focus:ring-4 focus:ring-[#00583f]/10"
-            >
-              <option>Choose a topic</option>
-              <option>Programs and services</option>
-              <option>Volunteer or membership</option>
-              <option>Partnerships</option>
-              <option>General question</option>
-            </select>
+            <input
+              v-model="form.phone"
+              type="tel"
+              placeholder="(123) 456-7890"
+              class="rounded-xl border bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:ring-4"
+              :class="form.errors.phone
+                ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/10'
+                : 'border-slate-200 focus:border-[#00583f] focus:ring-[#00583f]/10'"
+            />
+            <p v-if="form.errors.phone" class="flex items-center gap-1.5 text-xs text-rose-600">
+              <i class="fas fa-circle-exclamation text-[10px]"></i>
+              {{ form.errors.phone }}
+            </p>
           </label>
 
+          <!-- Subject -->
+          <label class="mt-5 flex flex-col gap-2">
+            <span class="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-[#00583f]">
+              <i class="fas fa-comment-dots mr-1 text-[#e0ac2e]"></i>SUBJECT
+              <span class="ml-1 text-[10px] font-medium normal-case tracking-normal text-slate-400">(optional)</span>
+            </span>
+            <input
+              v-model="form.subject"
+              type="text"
+              placeholder="What is this about?"
+              class="rounded-xl border bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:ring-4"
+              :class="form.errors.subject
+                ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/10'
+                : 'border-slate-200 focus:border-[#00583f] focus:ring-[#00583f]/10'"
+            />
+            <p v-if="form.errors.subject" class="flex items-center gap-1.5 text-xs text-rose-600">
+              <i class="fas fa-circle-exclamation text-[10px]"></i>
+              {{ form.errors.subject }}
+            </p>
+          </label>
+
+          <!-- Message -->
           <label class="mt-5 flex flex-col gap-2">
             <span class="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-[#00583f]">
               <i class="fas fa-pen mr-1 text-[#e0ac2e]"></i>YOUR MESSAGE
+              <span class="text-rose-500">*</span>
             </span>
             <textarea
-              name="message"
+              v-model="form.message"
               rows="5"
               placeholder="Tell us a little about what you need..."
-              class="resize-none rounded-xl border border-slate-200 bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-[#00583f] focus:bg-white focus:ring-4 focus:ring-[#00583f]/10"
+              class="resize-none rounded-xl border bg-[#fbfaf4]/50 px-4 py-3.5 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:ring-4"
+              :class="form.errors.message
+                ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/10'
+                : 'border-slate-200 focus:border-[#00583f] focus:ring-[#00583f]/10'"
             ></textarea>
+            <p v-if="form.errors.message" class="flex items-center gap-1.5 text-xs text-rose-600">
+              <i class="fas fa-circle-exclamation text-[10px]"></i>
+              {{ form.errors.message }}
+            </p>
           </label>
 
           <!-- Footer -->
@@ -259,10 +327,17 @@
             </p>
             <button
               type="submit"
-              class="inline-flex items-center justify-center rounded-full bg-[#00583f] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#003c2b] hover:shadow-[0_10px_30px_rgba(0,88,63,0.3)] group"
+              :disabled="form.processing"
+              class="group inline-flex items-center justify-center rounded-full bg-[#00583f] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#003c2b] hover:shadow-[0_10px_30px_rgba(0,88,63,0.3)] disabled:opacity-60 disabled:hover:translate-y-0"
             >
-              SEND MESSAGE
-              <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+              <template v-if="!form.processing">
+                SEND MESSAGE
+                <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+              </template>
+              <template v-else>
+                <i class="fas fa-circle-notch fa-spin mr-2"></i>
+                SENDING…
+              </template>
             </button>
           </div>
         </form>
@@ -305,7 +380,6 @@
               us help you find your place in the community.
             </p>
 
-            <!-- Points -->
             <div class="mt-6 flex flex-col gap-3">
               <span class="flex items-center gap-3 text-sm font-semibold text-slate-700">
                 <b class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#00583f] text-xs font-extrabold text-white">
@@ -329,7 +403,7 @@
 
             <a
               href="mailto:info@QFCC.org"
-              class="mt-8 inline-flex items-center justify-center rounded-full bg-[#e0ac2e] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-[#002d21] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#c9991f] hover:shadow-[0_10px_30px_rgba(224,172,46,0.35)] group"
+              class="group mt-8 inline-flex items-center justify-center rounded-full bg-[#e0ac2e] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-[#002d21] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#c9991f] hover:shadow-[0_10px_30px_rgba(224,172,46,0.35)]"
             >
               EMAIL OUR TEAM
               <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
@@ -342,11 +416,44 @@
 </template>
 
 <script setup>
+import { useForm } from '@inertiajs/vue3'
+import { ref, onMounted } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
+
+const form = useForm({
+  full_name: '',
+  email: '',
+  phone: '',
+  subject: '',
+  message: '',
+})
+
+const showSuccess = ref(false)
+
+// Auto-hide success banner after 6s
+onMounted(() => {
+  // nothing
+})
+
+function submit() {
+  form.post(route('contact.store'), {
+    preserveScroll: true,
+    onSuccess: () => {
+      form.reset()
+      showSuccess.value = true
+      setTimeout(() => (showSuccess.value = false), 6000)
+      // Scroll to the form so the success banner is visible
+      document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    },
+    onError: () => {
+      // Scroll to the first error
+      document.querySelector('.text-rose-600')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    },
+  })
+}
 </script>
 
 <style scoped>
-/* ---------- Custom pattern for hero ---------- */
 .contact-hero-pattern {
   background-image: radial-gradient(circle at 20% 30%, rgba(224, 172, 46, 0.4) 1.5px, transparent 1.5px),
     radial-gradient(circle at 80% 70%, rgba(224, 172, 46, 0.4) 1.5px, transparent 1.5px);
@@ -354,7 +461,6 @@ import AppLayout from '@/Layouts/AppLayout.vue'
   background-position: 0 0, 25px 25px;
 }
 
-/* ---------- Animations ---------- */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -375,24 +481,16 @@ import AppLayout from '@/Layouts/AppLayout.vue'
   animation-delay: 300ms;
 }
 
-/* ---------- Font serif helper ---------- */
 .font-serif {
   font-family: Georgia, 'Times New Roman', serif;
 }
 
-/* ---------- Smooth scrolling ---------- */
 html {
   scroll-behavior: smooth;
 }
 
-/* ---------- Focus rings ---------- */
 *:focus-visible {
   outline: 2px solid #e0ac2e;
   outline-offset: 2px;
-}
-
-/* ---------- Custom select arrow spacing fix ---------- */
-select {
-  background-position: right 1rem center;
 }
 </style>

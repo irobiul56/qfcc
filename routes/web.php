@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\ActivitiesController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\CoreIdentityController;
-use App\Http\Controllers\DonationController;
-use App\Http\Controllers\DonationMethodController;
-use App\Http\Controllers\FeatureController;
-use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\DonationCampaignController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NoticeController;
-use App\Models\Activity;
+use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Notice;
+use App\Http\Controllers\VolunteerController;
+use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\EventRegistrationController;
+use App\Http\Controllers\VisionMissionController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SocialLinkController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,16 +28,11 @@ Route::get('/home', function () {
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/about', function () {
-    return Inertia::render('About');
-})->name('about');
+Route::get('/about', [VisionMissionController::class, 'about'])->name('about');
 
-Route::get('/programs-and-services', function () {
-    return Inertia::render('Programs',[
-    ]);
-})->name('programs');
+Route::get('/programs-and-services', [ProgramController::class, 'homeindex'])->name('programs');
 
- Route::get('/activities/{slug}', [HomeController::class, 'singleactivity'])->name('single.activity');
+Route::get('/activities/{slug}', [HomeController::class, 'singleactivity'])->name('single.activity');
 
 Route::get('/blog', function () {
     return Inertia::render('Blog');
@@ -49,20 +44,16 @@ Route::get('/user', function () {
     return Inertia::render('User/Profile');
 })->name('user.profile');
 
- Route::get('/gallery', [GalleryController::class, 'gallery'])->name('gallery');
- Route::get('/blog', [BlogController::class, 'BlogPost'])->name('blog');
-
 
 Route::get('/blog/{slug}', function ($slug) {
     return Inertia::render('Blog/Show', ['slug' => $slug]);
 })->name('blog.show');
 
- Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
-
 // Add these routes for CTA links
-Route::get('/donate', function () {
-    return Inertia::render('Donate');
-})->name('donate');
+
+Route::get('/donate', [DonationCampaignController::class, 'create'])->name('donate');
+Route::get('/donate/{campaign:slug}', [DonationCampaignController::class, 'show'])->name('donate.campaign');
+Route::post('/donate/{campaign:slug}', [DonationCampaignController::class, 'donatestore'])->name('donate.store');
 
 Route::get('/volunteer', function () {
     return Inertia::render('Volunteer');
@@ -72,63 +63,163 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('contact');
 
-Route::get('/events', function(){
-    return Inertia::render('Event');
-})->name('events');
+// Public contact form submission
+Route::post('/contact', [ContactMessageController::class, 'store'])
+    ->name('contact.store');
+
+
+Route::get('/event', [EventController::class, 'create'])->name('event.create');
+Route::post('/event/{event}/register', [EventRegistrationController::class, 'store'])
+    ->name('event.register');
+Route::get('/event/{event:slug}', [EventController::class, 'show'])->name('event.show');
 
 Route::get('/get-involved', function(){
     return Inertia::render('Involved');
 })->name('get-involved');
 
-Route::post('/contact', [ContactController::class, 'contactsubmit'])->name('contact.submit');
+// Show the form
+Route::get('/membership', [MembershipController::class, 'create'])
+    ->name('membership.create');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Store submission
+Route::post('/membership', [MembershipController::class, 'store'])->name('membership.store');
+
+Route::post('/membership/{membership}/payment', [MembershipController::class, 'confirmPayment'])
+    ->name('membership.payment.confirm');
+
+Route::get('/volunteer', [VolunteerController::class, 'create'])->name('volunteer.create');
+Route::post('/volunteer', [VolunteerController::class, 'store'])->name('volunteer.store');
+
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-
-    Route::resource('activites', ActivitiesController::class);
-    Route::resource('blogpost', BlogController::class);
-    Route::resource('photos', GalleryController::class);
-    Route::resource('notices', NoticeController::class);
-    Route::resource('contactlist', ContactController::class);
 
     Route::get('/admin/home', [HomeController::class, 'homeadmin'])->name('home.admin');
 
     Route::post('/slide/update', [HomeController::class, 'update'])->name('slide.update');
     
-    Route::resource('core-identities', CoreIdentityController::class);
-    Route::resource('/features', FeatureController::class);
+    // Program routes
+    Route::resource('programs', ProgramController::class);
+
+    // Toggle active status
+    Route::patch('programs/{program}/toggle-status', [ProgramController::class, 'toggleStatus'])
+        ->name('programs.toggle-status');
 
 
-     // Donation Resource Routes (Main Section)
-    Route::resource('donations', DonationController::class)->except(['index', 'create', 'store']);
+    Route::resource('events', EventController::class);
+
+    // Toggle routes
+    Route::patch('events/{event}/toggle-status', [EventController::class, 'toggleStatus'])
+        ->name('events.toggle-status');
+
+    Route::patch('events/{event}/toggle-featured', [EventController::class, 'toggleFeatured'])
+        ->name('events.toggle-featured');
+
+    // Resource route named "campaigns" (matches your sidebar)
+    Route::resource('campaigns', DonationCampaignController::class);
+
+    // Toggle routes
+    Route::patch('campaigns/{campaign}/toggle-status', [DonationCampaignController::class, 'toggleStatus'])
+        ->name('campaigns.toggle-status');
+
+    Route::patch('campaigns/{campaign}/toggle-featured', [DonationCampaignController::class, 'toggleFeatured'])
+        ->name('campaigns.toggle-featured');
+
+    // Membership management routes
+     Route::get('/admin/memberships', [MembershipController::class, 'index'])
+        ->name('membership.index');
+
+    Route::post('/admin/memberships/{membership}/approve', [MembershipController::class, 'approve'])
+        ->name('membership.approve');
+
+    Route::post('/admin/memberships/{membership}/reject', [MembershipController::class, 'reject'])
+        ->name('membership.reject');
+
+    Route::delete('/admin/memberships/{membership}', [MembershipController::class, 'destroy'])
+        ->name('membership.destroy');
+
+    // Volunteer management routes
+    Route::get('/admin/volunteers', [VolunteerController::class, 'index'])->name('volunteer.index');
+    Route::post('/admin/volunteers/{volunteer}/approve', [VolunteerController::class, 'approve'])->name('volunteer.approve');
+    Route::post('/admin/volunteers/{volunteer}/reject', [VolunteerController::class, 'reject'])->name('volunteer.reject');
+    Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'destroy'])->name('volunteer.destroy');
+    Route::post('/admin/volunteers/{volunteer}/restore', [VolunteerController::class, 'restore'])->name('volunteer.restore');
     
-    // Additional custom routes for donation
-    Route::post('donations/{donation}/image', [DonationController::class, 'updateImage'])
-        ->name('donations.update-image');
+    // Contact message management routes
+    Route::get('/admin/contact-messages', [ContactMessageController::class, 'index'])
+        ->name('contact-messages.index');
+
+    Route::post('/admin/contact-messages/{message}/read', [ContactMessageController::class, 'markRead'])
+        ->name('contact-messages.read');
+
+    Route::post('/admin/contact-messages/{message}/unread', [ContactMessageController::class, 'markUnread'])
+        ->name('contact-messages.unread');
+
+    Route::delete('/admin/contact-messages/{message}', [ContactMessageController::class, 'destroy'])
+        ->name('contact-messages.destroy');
+
+    // Event registration management routes
+     Route::get('/admin/event-registrations', [EventRegistrationController::class, 'index'])
+        ->name('event-registrations.index');
+
+    Route::patch('/admin/event-registrations/{registration}/status', [EventRegistrationController::class, 'updateStatus'])
+        ->name('event-registrations.update-status');
+
+    Route::delete('/admin/event-registrations/{registration}', [EventRegistrationController::class, 'destroy'])
+        ->name('event-registrations.destroy');
+
+    Route::get('/admin/event-registrations/export', [EventRegistrationController::class, 'export'])
+        ->name('event-registrations.export');
+
+     Route::get('/donations', [DonationController::class, 'index'])
+        ->name('donations.index');
+
+    Route::get('/donations/export', [DonationController::class, 'export'])
+        ->name('donations.export');
+
+    Route::post('/transactions/{transaction}/verify', [DonationController::class, 'verify'])
+        ->name('transactions.verify');
+
+    Route::post('/transactions/{transaction}/refund', [DonationController::class, 'refund'])
+        ->name('transactions.refund');
+
+    Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])
+        ->name('donations.destroy');
+
+    // Vision and Mission management routes
+    Route::get('/visions-missions', [VisionMissionController::class, 'index'])
+        ->name('visions-missions.index');
+
+    Route::post('/visions-missions', [VisionMissionController::class, 'store'])
+        ->name('visions-missions.store');
+
+    Route::put('/visions-missions/{visionMission}', [VisionMissionController::class, 'update'])
+        ->name('visions-missions.update');
+
+    Route::post('/visions-missions/{visionMission}/toggle', [VisionMissionController::class, 'toggleActive'])
+        ->name('visions-missions.toggle');
+
+    Route::delete('/visions-missions/{visionMission}', [VisionMissionController::class, 'destroy'])
+        ->name('visions-missions.destroy');
     
-    // Donation Methods Resource Routes (Nested under donation)
-    Route::resource('donations.methods', DonationMethodController::class)
-        ->except(['show'])
-        ->shallow(); 
+    // Social Link management routes
+      Route::get('/social-links', [SocialLinkController::class, 'index'])
+        ->name('social-links.index');
 
-    Route::patch('/donation/methods/{donationMethod}', [DonationMethodController::class, 'updateMethod'])->name('donations.methods.update');
-    Route::delete('/donation/methods/{donationMethod}', [DonationMethodController::class, 'destroyMethod'])->name('donations.methods.destroy');
+    Route::post('/social-links', [SocialLinkController::class, 'store'])
+        ->name('social-links.store');
 
-    
-    // Bulk actions for donation methods
-    Route::post('donation-methods/bulk-update', [DonationMethodController::class, 'bulkUpdate'])
-        ->name('donation.methods.bulk-update');
-    Route::post('donation-methods/reorder', [DonationMethodController::class, 'reorder'])
-        ->name('donation.methods.reorder');
+    Route::put('/social-links/{socialLink}', [SocialLinkController::class, 'update'])
+        ->name('social-links.update');
 
+    Route::post('/social-links/{socialLink}/toggle', [SocialLinkController::class, 'toggleActive'])
+        ->name('social-links.toggle');
 
+    Route::delete('/social-links/{socialLink}', [SocialLinkController::class, 'destroy'])
+        ->name('social-links.destroy');
 });
 
 require __DIR__.'/auth.php';

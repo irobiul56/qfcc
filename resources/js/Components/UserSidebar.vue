@@ -41,7 +41,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Programs -->
         <li>
-          <NavLink
+          <NavLink :href="route('programs.index')" :active="isRouteActive(['programs', 'programs.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -53,7 +53,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Events -->
         <li>
-          <NavLink 
+          <NavLink :href="route('events.index')" :active="isRouteActive(['events', 'events.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -65,7 +65,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Event Registrations -->
         <li>
-          <NavLink 
+          <NavLink :href="route('event-registrations.index')" :active="isRouteActive(['event-registrations', 'event-registrations.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -77,7 +77,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Donations -->
         <li>
-          <NavLink 
+          <NavLink :href="route('donations.index')" :active="isRouteActive(['donations', 'donations.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -89,7 +89,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Donation Campaigns -->
         <li>
-          <NavLink 
+          <NavLink :href="route('campaigns.index')" :active="isRouteActive(['campaigns', 'campaigns.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -101,7 +101,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Volunteers -->
         <li>
-          <NavLink 
+          <NavLink :href="route('volunteer.index')" :active="isRouteActive(['volunteer', 'volunteer.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -113,7 +113,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Members -->
         <li>
-          <NavLink 
+          <NavLink :href="route('membership.index')" :active="isRouteActive(['membership', 'membership.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -124,7 +124,7 @@ const isRouteActive = (patterns) => {
         </li>
 
         <!-- Newsletters -->
-        <li>
+        <!-- <li>
           <NavLink 
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
@@ -133,11 +133,11 @@ const isRouteActive = (patterns) => {
               <span v-if="!isCollapsed" class="whitespace-nowrap">Newsletter</span>
             </div>
           </NavLink>
-        </li>
+        </li> -->
 
         <!-- Contact Messages -->
         <li>
-          <NavLink 
+          <NavLink :href="route('contact-messages.index')" :active="isRouteActive(['contact-messages', 'contact-messages.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -148,7 +148,7 @@ const isRouteActive = (patterns) => {
         </li>
 
         <!-- Gallery -->
-        <li>
+        <!-- <li>
           <NavLink 
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
@@ -157,10 +157,10 @@ const isRouteActive = (patterns) => {
               <span v-if="!isCollapsed" class="whitespace-nowrap">Gallery</span>
             </div>
           </NavLink>
-        </li>
+        </li> -->
 
         <!-- Testimonials -->
-        <li>
+        <!-- <li>
           <NavLink 
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
@@ -169,7 +169,7 @@ const isRouteActive = (patterns) => {
               <span v-if="!isCollapsed" class="whitespace-nowrap">Testimonials</span>
             </div>
           </NavLink>
-        </li>
+        </li> -->
 
 
         <!-- Divider -->
@@ -191,7 +191,7 @@ const isRouteActive = (patterns) => {
 
         <!-- Vision & Mission -->
         <li>
-          <NavLink
+          <NavLink :href="route('visions-missions.index')" :active="isRouteActive(['visions-missions', 'visions-missions.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">
@@ -202,7 +202,7 @@ const isRouteActive = (patterns) => {
         </li>
 
         <!-- CTA Cards -->
-        <li>
+        <!-- <li>
           <NavLink 
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
@@ -211,10 +211,10 @@ const isRouteActive = (patterns) => {
               <span v-if="!isCollapsed" class="whitespace-nowrap">CTA Cards</span>
             </div>
           </NavLink>
-        </li>
+        </li> -->
 
         <!-- Site Settings -->
-        <li>
+        <!-- <li>
           <NavLink 
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
@@ -223,11 +223,11 @@ const isRouteActive = (patterns) => {
               <span v-if="!isCollapsed" class="whitespace-nowrap">Site Settings</span>
             </div>
           </NavLink>
-        </li>
+        </li> -->
 
         <!-- Social Links -->
         <li>
-          <NavLink 
+          <NavLink :href="route('social-links.index')" :active="isRouteActive(['social-links', 'social-links.*'])"
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
             :class="isCollapsed ? 'justify-center px-2' : 'px-3'">
             <div class="flex items-center">

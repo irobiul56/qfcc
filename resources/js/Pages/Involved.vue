@@ -106,8 +106,8 @@
         <!-- Choice grid -->
         <div class="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <!-- Featured choice -->
-          <a
-            href="#volunteer"
+          <Link
+            :href="route('volunteer.create')"
             class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#00583f] to-[#002d21] p-8 text-white shadow-[0_10px_40px_rgba(0,65,47,0.2)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(0,65,47,0.3)] lg:row-span-2"
           >
             <div class="pointer-events-none absolute -right-1/3 -top-1/3 h-[200%] w-[200%]" style="background: radial-gradient(circle, rgba(224, 172, 46, 0.1) 0%, transparent 70%)"></div>
@@ -138,11 +138,11 @@
               VOLUNTEER WITH US
               <i class="fas fa-arrow-up-right-from-square ml-2 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-1"></i>
             </span>
-          </a>
+          </Link>
 
           <!-- Choice 2 -->
-          <a
-            href="#membership"
+          <Link
+            :href="route('membership.create')"
             class="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-500 hover:-translate-y-2 hover:border-[#e0ac2e]/30 hover:shadow-[0_20px_50px_rgba(224,172,46,0.15)]"
           >
             <div class="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#e0ac2e] to-[#c9991f] transition-transform duration-500 group-hover:scale-x-100"></div>
@@ -173,11 +173,11 @@
               BECOME A MEMBER
               <i class="fas fa-arrow-up-right-from-square ml-2 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-1"></i>
             </span>
-          </a>
+          </Link>
 
           <!-- Choice 3 -->
-          <a
-            href="#support"
+          <Link
+            :href="route('donate')"
             class="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-500 hover:-translate-y-2 hover:border-[#00583f]/30 hover:shadow-[0_20px_50px_rgba(0,88,63,0.15)]"
           >
             <div class="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#00583f] to-[#003c2b] transition-transform duration-500 group-hover:scale-x-100"></div>
@@ -208,7 +208,7 @@
               SUPPORT QFCC
               <i class="fas fa-arrow-up-right-from-square ml-2 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-1"></i>
             </span>
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -271,13 +271,13 @@
               </div>
             </div>
 
-            <a
-              href="#contact"
+            <Link
+              :href="route('volunteer.create')"
               class="mt-8 inline-flex items-center justify-center rounded-full bg-[#00583f] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#003c2b] hover:shadow-[0_10px_30px_rgba(0,88,63,0.3)] group"
             >
               START A CONVERSATION
               <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -313,13 +313,13 @@
             reflects the community it serves.
           </p>
 
-          <a
-            href="/contact"
+          <Link
+            :href="route('membership.create')"
             class="inline-flex items-center text-[0.7rem] font-extrabold uppercase tracking-[0.15em] text-[#00583f] transition-all group-hover:text-[#e0ac2e]"
           >
             BECOME A MEMBER
             <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
-          </a>
+          </Link>
         </article>
 
         <!-- Support panel -->
@@ -351,13 +351,13 @@
             place to feel at home.
           </p>
 
-          <a
-            href="/donate"
+          <Link
+            :href="route('donate')"
             class="inline-flex items-center justify-center rounded-full bg-[#e0ac2e] px-8 py-3.5 text-xs font-extrabold uppercase tracking-[0.1em] text-[#002d21] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#c9991f] hover:shadow-[0_10px_30px_rgba(224,172,46,0.35)] group/btn"
           >
             DONATE TO QFCC
             <i class="fas fa-arrow-right ml-2 transition-transform group-hover/btn:translate-x-1"></i>
-          </a>
+          </Link>
         </article>
       </section>
 
@@ -389,6 +389,8 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+
 </script>
 
 <style scoped>

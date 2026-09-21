@@ -1,131 +1,31 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, h, defineComponent, onMounted } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-// Page state variables
-const isMobileMenuOpen = ref(false)
-const activeCategory = ref('all')
+/* ═══════════════════════════════════════════════════════════
+   PROPS — from ProgramController
+   ═══════════════════════════════════════════════════════════ */
+const props = defineProps({
+  programs: { type: Array, default: () => [] },
+})
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE STATE
+   ═══════════════════════════════════════════════════════════ */
 const activeModal = ref(null)
 
-// Dynamic Programs & Services Data Model
-const services = [
-  {
-    id: 1,
-    number: '01',
-    category: 'family',
-    title: 'FAMILY & COMMUNITY SERVICES',
-    description: 'Programs intended to strengthen families and improve community well-being.',
-    image: '/storage/images/why-family.jpg',
-    icon: '♡',
-    items: [
-      'Family counseling & guidance',
-      'Marriage & parenting workshops',
-      'Community resource referrals',
-      'Financial literacy programs'
-    ],
-    fullDetails: 'Our Family & Community Services offer holistic guidance for individuals and families. We host group workshops, one-on-one family mentorship, and direct financial counseling to navigate modern community challenges with faith-inspired resilience.'
-  },
-  {
-    id: 2,
-    number: '02',
-    category: 'youth',
-    title: 'YOUTH DEVELOPMENT',
-    description: 'Helping young people grow with confidence, character, and direction.',
-    image: '/storage/images/event-youth.jpg',
-    icon: '♙',
-    items: [
-      'Leadership development',
-      'Mentorship programs',
-      'Sports & recreation',
-      'College & career readiness',
-      'Character building'
-    ],
-    fullDetails: 'Empowering the next generation with constructive youth leadership bootcamps, structured sports programs, academic tutoring, and career readiness panels that connect youth with industry professionals.'
-  },
-  {
-    id: 3,
-    number: '03',
-    category: 'health',
-    title: 'HEALTH & WELLNESS',
-    description: 'Supporting healthy living, awareness, and connection across generations.',
-    image: '/storage/images/event-health.jpg',
-    icon: '♥',
-    items: [
-      'Health screenings',
-      'Mental health awareness',
-      'Wellness workshops',
-      'Senior support programs'
-    ],
-    fullDetails: 'Promoting physical and mental health through community wellness fairs, free routine health checks, specialized senior care groups, and accessible mental health support circles.'
-  },
-  {
-    id: 4,
-    number: '04',
-    category: 'humanitarian',
-    title: 'FOOD PANTRY & HUMANITARIAN RELIEF',
-    description: 'Meeting urgent needs with compassion, dignity, and reliable community support.',
-    image: '/storage/images/support.png',
-    icon: '▣',
-    items: [
-      'Emergency food assistance',
-      'Ramadan food distribution',
-      'Winter clothing drives',
-      'Disaster relief efforts'
-    ],
-    fullDetails: 'Our weekly food pantry and seasonal humanitarian drives ensure that no family in our community goes without essential groceries, warm clothes, and urgent emergency aid.'
-  },
-  {
-    id: 5,
-    number: '05',
-    category: 'immigrant',
-    title: 'IMMIGRANT & REFUGEE SUPPORT',
-    description: 'Helping newcomers navigate resources and feel at home in their community.',
-    image: '/storage/images/member.png',
-    icon: '◉',
-    items: [
-      'Newcomer orientation',
-      'Citizenship resources',
-      'Translation & interpretation',
-      'Social service navigation'
-    ],
-    fullDetails: 'Providing soft landing assistance for newly arrived families including English conversation circles, document translation assistance, legal referral networks, and local orientation.'
-  },
-  {
-    id: 6,
-    number: '06',
-    category: 'spiritual',
-    title: 'RELIGIOUS & SPIRITUAL SERVICES',
-    description: 'Creating opportunities for learning, reflection, guidance, and spiritual growth.',
-    image: '/storage/images/quran.png',
-    icon: '✦',
-    items: [
-      'Educational lectures',
-      'Adult & youth halaqa',
-      'Interfaith dialogue',
-      'Hajj & Umrah services',
-      'Marriage & divorce guidance'
-    ],
-    fullDetails: 'Fostering deep spiritual development through regular study circles, faith-based counseling, interfaith bridge-building sessions, and community educational events.'
-  }
-]
-
-// Toggle Mobile Menu
-const toggleMobileMenu = () => {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value
+const openServiceModal = (program) => {
+  activeModal.value = program
 }
 
-// Open modal detail view
-const openServiceModal = (service) => {
-  activeModal.value = service
-}
-
-// Close modal detail view
 const closeModal = () => {
   activeModal.value = null
 }
 
-// Scroll Intersection Observer for Vue lifecycle
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════ */
 onMounted(() => {
   const observer = new IntersectionObserver(
     (entries) => {
@@ -142,18 +42,67 @@ onMounted(() => {
 
   document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el))
 })
+
+/* ═══════════════════════════════════════════════════════════
+   SvgIcon COMPONENT
+   ═══════════════════════════════════════════════════════════ */
+const SVG_PATHS = {
+  'graduation-cap': ['M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5'],
+  'users':          ['M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z'],
+  'heart':          ['M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z'],
+  'user-plus':      ['M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 019.374 21c-2.331 0-4.512-.645-6.374-1.766z'],
+  'globe':          ['M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418'],
+  'utensils':       ['M7.875 14.25l1.214 1.942a2.25 2.25 0 01.28.75v4.808a.75.75 0 01-1.5 0v-3.942L6.9 16.865a2.25 2.25 0 01-.4-1.276V7.125a.75.75 0 011.5 0v6.375zm11.25 4.316a9.765 9.765 0 001.5-4.601V4.125a.75.75 0 00-1.28-.53l-4.05 4.05a.75.75 0 00-.22.53v8.517c0 .414.336.75.75.75H15c.108 0 .214.008.318.023a.75.75 0 00.79-.899l-.001-.001zM6 10.5h12'],
+  'heart-pulse':    ['M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z', 'M7.5 12h3l1.5-3 2 4.5 1.5-1.5h2.5'],
+  'mosque':         ['M12 2.25c0 0-4.5 3.75-4.5 7.5 0 2.485 2.014 4.5 4.5 4.5s4.5-2.015 4.5-4.5c0-3.75-4.5-7.5-4.5-7.5z', 'M2.25 21h19.5M4.5 21V10.5c0-1.5 1.5-3 1.5-3M19.5 21V10.5c0-1.5-1.5-3-1.5-3', 'M8.25 21v-3a3.75 3.75 0 117.5 0v3'],
+  'star':           ['M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z'],
+}
+
+const SvgIcon = defineComponent({
+  props: {
+    name: { type: String, required: true },
+    strokeWidth: { type: [Number, String], default: 1.75 },
+  },
+  setup(props) {
+    return () => {
+      // Handle both 'graduation-cap' and 'fas fa-graduation-cap'
+      let key = props.name || 'star'
+      key = key.replace(/^(fas|far|fab|fa-solid|fa-regular|fa-brands|fa)\s+/, '').replace('fa-', '')
+
+      const paths = SVG_PATHS[key] || SVG_PATHS['star']
+
+      return h('svg', {
+        xmlns: 'http://www.w3.org/2000/svg',
+        fill: 'none',
+        viewBox: '0 0 24 24',
+        'stroke-width': props.strokeWidth,
+        stroke: 'currentColor',
+        class: 'shrink-0',
+      }, paths.map((d, i) =>
+        h('path', {
+          key: i,
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          d,
+        })
+      ))
+    }
+  },
+})
 </script>
 
 <template>
   <AppLayout>
     <Head title="Programs & Services — QFCC" />
 
- 
-
     <main>
-      <!-- Hero Section -->
+      <!-- ═══════════ HERO ═══════════ -->
       <section class="hero relative overflow-hidden bg-[#003d2c]">
-        <img src="/storage/images/hero.jpg" alt="QFCC volunteers serving the community" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-1000 hover:scale-105" />
+        <img
+          src="/storage/images/hero.jpg"
+          alt="QFCC volunteers serving the community"
+          class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-1000 hover:scale-105"
+        />
         <div class="absolute inset-0 bg-gradient-to-r from-[#002d21]/95 via-[#003c2b]/80 to-transparent"></div>
         <div class="relative mx-auto flex min-h-[430px] max-w-[1500px] items-center px-5 py-14 sm:px-8 lg:min-h-[520px] lg:px-12">
           <div class="max-w-[570px] text-white">
@@ -168,7 +117,7 @@ onMounted(() => {
               <a href="#services" class="inline-flex items-center gap-2 rounded bg-[#00583f] px-4 py-2.5 text-xs font-extrabold text-white transition hover:-translate-y-0.5 hover:brightness-105 border border-[#74a895]">
                 EXPLORE SERVICES <span>↓</span>
               </a>
-              <Link href="/get-involved" class="inline-flex items-center gap-2 rounded bg-[#d9a52b] px-4 py-2.5 text-xs font-extrabold text-white transition hover:-translate-y-0.5 hover:brightness-105 border border-[#efc55c]">
+              <Link :href="route('get-involved')" class="inline-flex items-center gap-2 rounded bg-[#d9a52b] px-4 py-2.5 text-xs font-extrabold text-white transition hover:-translate-y-0.5 hover:brightness-105 border border-[#efc55c]">
                 GET INVOLVED <span>→</span>
               </Link>
             </div>
@@ -176,7 +125,7 @@ onMounted(() => {
         </div>
       </section>
 
-      <!-- Mission Statement Section -->
+      <!-- ═══════════ MISSION STATEMENT ═══════════ -->
       <section class="bg-[#fbfaf4] px-5 py-12 sm:px-8 lg:py-14">
         <div class="mx-auto max-w-[1050px] text-center reveal-on-scroll transition-all duration-700 opacity-0 translate-y-4">
           <div class="mb-5 text-center">
@@ -192,8 +141,9 @@ onMounted(() => {
         </div>
       </section>
 
-      <!-- Main Interactive Services Directory -->
+      <!-- ═══════════ SERVICES DIRECTORY ═══════════ -->
       <section id="services" class="relative mx-auto grid max-w-[1250px] scroll-mt-[110px] gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(220px,.72fr)_minmax(0,1.9fr)] lg:gap-[46px] lg:py-16">
+
         <!-- Sticky Sidebar -->
         <div class="self-start px-0 py-5 lg:sticky lg:top-[125px]">
           <div class="mb-[22px] text-left">
@@ -207,72 +157,60 @@ onMounted(() => {
           <p class="my-[18px] max-w-[250px] text-sm leading-[1.65] text-[#5d6862]">
             Explore a starting point below. Our team can help connect you with the right program or resource.
           </p>
-          <Link href="/contact" class="inline-flex items-center gap-2 border-b border-[#d9a52b] pb-1 text-[10px] font-extrabold tracking-wider text-[#00583f] hover:text-[#d9a52b] transition-colors">
+          <Link :href="route('contact')" class="inline-flex items-center gap-2 border-b border-[#d9a52b] pb-1 text-[10px] font-extrabold tracking-wider text-[#00583f] hover:text-[#d9a52b] transition-colors">
             TALK TO OUR TEAM <span class="text-[#d9a52b] text-base leading-none">↗</span>
           </Link>
         </div>
 
-        <!-- Services Cards Grid -->
+        <!-- Services Grid -->
         <div class="grid grid-cols-1 gap-4 pt-7 lg:grid-cols-2 lg:pt-5">
-          <!-- Standard Cards (Vue Dynamic Render) -->
-          <article 
-            v-for="service in services" 
-            :key="service.id" 
+
+          <!-- Empty state -->
+          <div v-if="programs.length === 0" class="col-span-full py-16 text-center text-sm text-slate-400">
+            No programs available at the moment.
+          </div>
+
+          <!-- Program Cards -->
+          <article
+            v-for="(program, index) in programs"
+            :key="program.id"
             class="reveal-on-scroll transition-all duration-500 opacity-0 translate-y-4 flex flex-col justify-between rounded-lg border border-[#e2e6de] border-t-4 border-t-[#d9a52b] bg-gradient-to-b from-white to-[#fcfdf9] p-[18px] hover:-translate-y-1 hover:border-t-[#00583f] hover:shadow-lg"
           >
             <div>
               <div class="flex items-center justify-between mb-3">
-                <span class="rounded-full border border-[#e4e8e1] px-2.5 py-1 font-serif text-xs font-bold text-[#7a877f]">{{ service.number }}</span>
-                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-[#00583f] text-xl text-white font-bold">{{ service.icon }}</div>
+                <span class="rounded-full border border-[#e4e8e1] px-2.5 py-1 font-serif text-xs font-bold text-[#7a877f]">
+                  {{ String(index + 1).padStart(2, '0') }}
+                </span>
+                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-[#00583f] text-white">
+                  <SvgIcon :name="program.icon" class="w-5 h-5" />
+                </div>
               </div>
-              <img :src="service.image" :alt="service.title" class="mb-4 h-[200px] w-full rounded-md object-cover" />
-              <h3 class="font-serif text-sm font-bold text-[#003d2c] leading-snug">{{ service.title }}</h3>
-              <p class="my-2 text-xs leading-relaxed text-[#59645e]">{{ service.description }}</p>
-              <ul class="my-3 space-y-1">
-                <li v-for="(item, idx) in service.items" :key="idx" class="relative pl-3 text-[11px] text-[#344139] before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#d9a52b]">
-                  {{ item }}
-                </li>
-              </ul>
+
+              <img
+                :src="program.image"
+                :alt="program.title"
+                class="mb-4 h-[200px] w-full rounded-md object-cover"
+              />
+
+              <h3 class="font-serif text-sm font-bold text-[#003d2c] leading-snug">
+                {{ program.title }}
+              </h3>
+
+              <p class="my-2 text-xs leading-relaxed text-[#59645e]" v-html="program.short_description"> </p>
             </div>
-            
-            <button 
-              @click="openServiceModal(service)" 
-              class="mt-4 flex w-full items-center justify-between border-t border-[#edf0ea] pt-3 text-[10px] font-extrabold tracking-wider text-[#00583f] hover:text-[#d9a52b]"
+
+            <button
+              @click="openServiceModal(program)"
+              class="mt-4 flex w-full items-center justify-between border-t border-[#edf0ea] pt-3 text-[10px] font-extrabold tracking-wider text-[#00583f] hover:text-[#d9a52b] transition-colors"
             >
               EXPLORE DETAILS <b class="text-base text-[#d9a52b]">→</b>
             </button>
           </article>
 
-          <!-- Featured Wide Card (#07) -->
-          <article class="reveal-on-scroll transition-all duration-500 opacity-0 translate-y-4 relative overflow-hidden rounded-lg bg-gradient-to-br from-[#004c37] via-[#00583f] to-[#08745a] p-6 text-white shadow-xl sm:col-span-2 lg:col-span-2 flex flex-col justify-between group">
-            <img src="/storage/images/calligraphy.jpg" alt="Calligraphy overlay" class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-screen transition-transform duration-700 group-hover:scale-105 group-hover:opacity-30" />
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#003d2c]/95 via-[#00583f]/85 to-[#00583f]/55"></div>
-            
-            <div class="relative z-10">
-              <div class="flex items-center justify-between mb-4">
-                <span class="rounded-full border border-white/25 px-2.5 py-1 font-serif text-xs font-bold text-white/80">07</span>
-                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-[#d9a52b] text-xl text-white font-bold">♧</div>
-              </div>
-              <span class="mb-1 block text-[10px] font-extrabold tracking-[.18em] text-[#f1ca69]">MAKE AN IMPACT</span>
-              <h3 class="font-serif text-lg font-bold text-white">VOLUNTEER &amp; CIVIC ENGAGEMENT</h3>
-              <p class="mt-2 mb-4 text-xs text-white/85">Turning shared values into practical action and stronger neighborhood partnerships.</p>
-
-              <ul class="grid gap-2 sm:grid-cols-2 my-4">
-                <li class="relative pl-3 text-xs text-white/90 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#f1ca69]">Volunteer opportunities</li>
-                <li class="relative pl-3 text-xs text-white/90 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#f1ca69]">Community outreach</li>
-                <li class="relative pl-3 text-xs text-white/90 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#f1ca69]">Community service projects</li>
-                <li class="relative pl-3 text-xs text-white/90 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#f1ca69]">Civic education &amp; engagement</li>
-              </ul>
-            </div>
-
-            <Link href="/get-involved" class="relative z-10 mt-4 flex items-center justify-between border-t border-white/20 pt-3 text-[10px] font-extrabold tracking-wider text-[#f1ca69] hover:text-white transition-colors">
-              FIND YOUR ROLE <b class="text-base text-white">→</b>
-            </Link>
-          </article>
         </div>
       </section>
 
-      <!-- Responsible Support Note -->
+      <!-- ═══════════ RESPONSIBLE SUPPORT ═══════════ -->
       <section class="bg-[#fbfaf4] px-5 py-12 sm:px-8 lg:py-14">
         <div class="mx-auto grid max-w-[1200px] items-center gap-8 lg:grid-cols-[.9fr_1.1fr] lg:gap-14">
           <div class="overflow-hidden rounded-lg shadow-lg">
@@ -296,12 +234,12 @@ onMounted(() => {
         </div>
       </section>
 
-      <!-- Call to Action Band -->
+      <!-- ═══════════ CTA BAND ═══════════ -->
       <section class="mx-auto max-w-[1200px] px-5 py-12 sm:px-8 lg:py-14">
         <div class="reveal-on-scroll transition-all duration-700 opacity-0 translate-y-4 group relative overflow-hidden rounded-lg bg-[#003d2c] text-white shadow-2xl p-8 sm:p-12">
           <img src="/storage/images/calligraphy.jpg" alt="QFCC volunteers" class="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-105" />
           <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#003d2c]/95 via-[#00583f]/80 to-[#003d2c]/35"></div>
-          
+
           <div class="relative z-10 max-w-[680px]">
             <p class="mb-3 text-[10px] font-extrabold tracking-[.2em] text-[#f1ca69]">COMMUNITY IN ACTION</p>
             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#d9a52b] text-2xl font-bold shadow-lg mb-4">♡</div>
@@ -309,7 +247,7 @@ onMounted(() => {
             <p class="max-w-[520px] text-sm leading-relaxed text-white/90 mb-6">
               Your time, partnership, and support help QFCC expand programs that create meaningful and lasting positive change.
             </p>
-            <Link href="/get-involved" class="inline-flex items-center gap-2 rounded bg-[#d9a52b] px-5 py-3 text-xs font-extrabold text-white transition hover:bg-[#c49323]">
+            <Link :href="route('get-involved')" class="inline-flex items-center gap-2 rounded bg-[#d9a52b] px-5 py-3 text-xs font-extrabold text-white transition hover:bg-[#c49323]">
               GET INVOLVED <span>→</span>
             </Link>
           </div>
@@ -317,22 +255,53 @@ onMounted(() => {
       </section>
     </main>
 
-    <!-- Modal for Detailed Service Views -->
-    <div v-if="activeModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div class="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl transition-all">
-        <button @click="closeModal" class="absolute right-4 top-4 text-2xl font-bold text-slate-400 hover:text-slate-700">✕</button>
+    <!-- ═══════════ DETAILS MODAL ═══════════ -->
+    <div
+      v-if="activeModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      @click.self="closeModal"
+    >
+      <div class="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl transition-all max-h-[90vh] overflow-y-auto">
+        <button
+          @click="closeModal"
+          class="absolute right-4 top-4 text-2xl font-bold text-slate-400 hover:text-slate-700"
+        >
+          ✕
+        </button>
+
         <div class="flex items-center gap-3 mb-4">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#00583f] text-white text-lg font-bold">{{ activeModal.icon }}</div>
-          <div>
-            <span class="text-xs font-bold text-[#d9a52b]">SERVICE #{{ activeModal.number }}</span>
-            <h3 class="font-serif text-lg font-bold text-[#003d2c]">{{ activeModal.title }}</h3>
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#00583f] text-white">
+            <SvgIcon :name="activeModal.icon" class="w-6 h-6" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <span class="text-xs font-bold text-[#d9a52b] uppercase tracking-wider">Program Details</span>
+            <h3 class="font-serif text-lg font-bold text-[#003d2c] leading-snug">
+              {{ activeModal.title }}
+            </h3>
           </div>
         </div>
-        <img :src="activeModal.image" :alt="activeModal.title" class="h-48 w-full rounded-lg object-cover mb-4" />
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">{{ activeModal.fullDetails }}</p>
+
+        <img
+          :src="activeModal.image"
+          :alt="activeModal.title"
+          class="h-48 w-full rounded-lg object-cover mb-4"
+        />
+
+        <p class="text-sm text-slate-600 leading-relaxed mb-4" v-html="activeModal.full_description || activeModal.short_description"></p>
+
         <div class="flex justify-end gap-3 border-t border-slate-100 pt-4">
-          <button @click="closeModal" class="rounded border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">Close</button>
-          <Link href="/contact" class="rounded bg-[#00583f] px-4 py-2 text-xs font-bold text-white hover:bg-[#004c37]">Inquire About Service</Link>
+          <button
+            @click="closeModal"
+            class="rounded border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Close
+          </button>
+          <Link
+            :href="route('contact')"
+            class="rounded bg-[#00583f] px-4 py-2 text-xs font-bold text-white hover:bg-[#004c37]"
+          >
+            Inquire About Program
+          </Link>
         </div>
       </div>
     </div>

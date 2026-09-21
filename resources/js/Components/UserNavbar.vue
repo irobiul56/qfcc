@@ -4,7 +4,7 @@ import { defineEmits, ref } from 'vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 
-const imageUrl = ref('/storage/images/logo.jpg');
+const imageUrl = ref('/storage/images/qfcc-logo.png');
 
 const emit = defineEmits(['toggle-sidebar']);
 const showMobileMenu = ref(false);
@@ -24,8 +24,8 @@ const showMobileMenu = ref(false);
       </button>
       <img 
         :src="imageUrl" 
-        alt="JMF" 
-        class="h-10 w-10 md:h-17 md:w-10 object-contain"
+        alt="QFCC" 
+        class="h-10 w-30 md:h-17 md:w-10 object-contain"
       />
     </div>
     
